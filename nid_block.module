@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * @file
+ * Contains nid_block.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Block\BlockPluginInterface;
+
+/**
+ * Implements hook_help().
+ */
+function nid_block_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nid_block module.
+    case 'help.page.nid_block':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Node in a block, per "nid" query parameter.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+function nid_block_block_view_alter(array &$build, BlockPluginInterface $block)
+{
+  $pluginDefinition = $block->getPluginDefinition();
+  if (
+    $pluginDefinition['provider'] == 'nid_block'
+    && $pluginDefinition['id'] == 'nid_block'
+  ) {
+//    $build['#configuration']['label'] =  '';
+  }
+}
+
+function nid_block_preprocess_html(&$variables) {
+
+  $request = \Drupal::request();
+  $nid = $request->query->get('nid');
+  if (!$nid) {
+    return;
+  }
+  $entity_type = 'node';
+  $view_mode = 'full';
+
+  $view_builder = \Drupal::entityTypeManager()->getViewBuilder($entity_type);
+  $storage = \Drupal::entityManager()->getStorage($entity_type);
+  $node = $storage->load($nid);
+  
+  $variables['head_title']['title'] = $node->getTitle();;
+  
+}
