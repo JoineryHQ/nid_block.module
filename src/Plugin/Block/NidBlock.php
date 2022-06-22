@@ -41,7 +41,7 @@ class NidBlock extends BlockBase {
     $view_mode = 'full';
 
     $view_builder = \Drupal::entityTypeManager()->getViewBuilder($entity_type);
-    $storage = \Drupal::entityManager()->getStorage($entity_type);
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
     $node = $storage->load($nid);
     $build = $view_builder->view($node, $view_mode);
     return $build;
